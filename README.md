@@ -1,1 +1,0 @@
-# AllPass-Password-Manager
