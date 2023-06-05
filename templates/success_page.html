@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllPass Password Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'main1.js' %}" defer></script>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="brand"><a href=""><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;All Pass</a></div>
+            <ul>
+            </ul>
+        </nav>
+    </header>
+
+    {% if code %}
+    <div style="text-align: center; 
+                margin-top: 50px;
+                margin-bottom: 50px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;">
+        <h2>{{text}}</h2>
+        <a href="/" style=" display: block;
+                            margin-top: 50px;
+                            width: fit-content;
+                            font-size: large;">Continue</a>
+        <!-- <button type="submit" method="POST" name="back_button">Continue</button> -->
+        <!-- <form action="." role="form" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Continue" name="back_button">
+        </form> -->
+    </div>
+    {% endif %}
+
+</body>
+
+</html>

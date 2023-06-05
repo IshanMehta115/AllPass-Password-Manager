@@ -1,0 +1,250 @@
+/*############# global #######""*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.brand a {
+    font-size: 60px;
+}
+
+:root {
+    --global-background-color: #4715a3;
+    --link-background-collor: rgb(62, 67, 62);
+    --global-text-color: #EDEDED;
+    --text-hover-color: #444444;
+    --gray-color: rgba(63, 40, 40, 0.1);
+}
+
+html {
+    background-color: var(--global-background-color);
+    color: var(--global-text-color);
+
+}
+
+input {
+    width: 70%;
+    margin: 10px auto;
+    padding: 5px;
+    border: none;
+}
+
+#home-modal{
+    display: "flex";
+    font-size: large;
+    margin-top: 140px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+#home-modal2 {
+    display: "none";
+    margin-top: 140px;
+    margin-left: 100x;
+    margin-right: 100px;
+}
+
+input:focus {
+    border: solid 1px var(--link-background-collor);
+}
+
+/*########### header #######"*/
+
+header {
+    box-shadow: 0 5px 15px -3px white;
+}
+
+header nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+header nav ul {
+    list-style-type: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+header nav ul li {
+    margin: 5px;
+}
+
+@media screen and (max-width: 640px) {
+    header nav {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .brand {
+        margin-bottom: 30px;
+        /* display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column; */
+    }
+}
+
+
+
+/*#########   modals #######"*/
+
+.modals-wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: var(--global-text-color);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+}
+
+.modal {
+    background-color: var(--global-background-color);
+    min-width: 400px;
+    min-height: 400px;
+    padding: 20px;
+}
+
+#close-modal {
+    background-color: var(--link-background-collor);
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    cursor: pointer;
+    padding: 5px;
+}
+
+
+#login-modal,
+#signup-modal,
+#pswd-reset-modal,
+#psr_page {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#password-modal,
+#add-password-modal,
+#modify-password-modal {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.copy {
+    cursor: pointer;
+}
+
+/*#########   card #######"*/
+
+.container {
+    margin-top: 20px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 80px;
+}
+
+.card {
+    background-color: var(--text-hover-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.actions {
+    margin: 5px;
+}
+
+.actions a {
+    display: none;
+    background-color: #4715a3;
+    flex-direction: column;
+    padding: 5px;
+    align-items: center;
+}
+
+.actions:hover .action-item {
+    display: flex;
+}
+
+@media screen and (max-width: 680px) {
+    .container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* I added this later, didn't cover it in the tutorial*/
+
+.actions {
+    cursor: pointer;
+    border: solid 0.3px var(--link-background-collor);
+    padding: 5px;
+}
+
+/*Change the size of the modal in the small devices*/
+@media screen and (max-width: 680px) {
+    .modal {
+        min-height: 300px;
+    }
+
+    .modals-wrapper {
+        max-height: 740px;
+    }
+}
+
+form input[type="submit"],
+form input[type="button"],
+button,
+a {
+    background-color: transparent;
+    border: white;
+    color: white;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    border-width: 5px;
+}
+
+form input[type="submit"]:hover,
+form input[type="button"]:hover,
+button:hover,
+a:hover {
+    background-color: white;
+    color: #4715a3;
+    transition: background-color 0.5s ease;
+}
+
+form input[type="text"],
+input[type="password"],
+input[type="email"] {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}

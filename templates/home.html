@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllPass Password Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'main1.js' %}" defer></script>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="brand"><a href=""><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;All Pass</a></div>
+            <ul>
+                {% if request.user.is_anonymous %}
+                <li><a href="javascript:;" onclick="displayModal('login-modal');" style="display: block; font-size: large;">Login</a></li>
+                <li><a href="javascript:;" onclick="displayModal('signup-modal');" style="display: block; font-size: large;">SignUp</a></li>
+                <!-- <li><a href="javascript:;" onclick="displayModal('pswd-reset-modal');">Password Reset</a></li> -->
+                {% else %}
+                <li><a id="toggle_btn" href="javascript:;" onclick="toggle_display('home-modal2','my_passwords','toggle_btn','search_bar_id')" style="display: block; font-size: large;">About the app</a></li>
+                <li><a href="javascript:;" onclick="displayModal('add-password-modal');" style="display: block; font-size: large;">Add</a></li>
+                <li><a href="javascript:;" onclick="document.getElementById('logout-btn').click();" style="display: block; font-size: large;" >Logout</a></li>
+                <form hidden="true" action="." method="POST">
+                    {% csrf_token %}
+                    <input type="submit" id="logout-btn" name="logout_page">
+                </form>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!--Display messages-->
+    {% if messages %}
+    <div class="messages" style="text-align: center;">
+        {% for message in messages %}
+        <p>
+            {% if message.tags == "error" %}
+            <i class="fa fa-exclamation" aria-hidden="true"></i>
+            {% else %}
+            <i class="fa fa-check" aria-hidden="true"></i>
+            {% endif %}
+            &nbsp;{{message}}
+        </p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!--Confirm email-->
+    {% if code %}
+    <div style="text-align: center;">
+        <form action="." method="POST" role="form" autocomplete="off">
+            {% csrf_token %}
+            <h2>Please confirm your email.</h2>
+            <p>Check your email and get the code.</p>
+            <input style="width: 30%;" type="text" name="code" placeholder="enter the 6 digit code ..."
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+            <input type="text" hidden="true" name="user" value="{{user.username}}"><br>
+            <input style="width: 30%;" type="submit" value="Confirm" name="confirm_button">
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Password reset verify OTP  -->
+    {% if code2 %}
+    <div style="text-align: center; margin-top: 20px;">
+        <form action="." method="POST" role="form" autocomplete="off">
+            {% csrf_token %}
+            <h2>OTP verification Required</h2>
+            <p>Check your registered email and get the code.</p>
+            <input type="text" name="code" placeholder="enter the 6 digit code ..."
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+            <input type="text" hidden="true" name="user" value="{{user.username}}">
+            <input type="submit" value="Confirm" name="pswd-reset-otp-entry">
+        </form>
+    </div>
+    {% endif %}
+
+
+    {% if code3 %}
+    <div class="modal" style="display: flex;" id="psr_page">
+        <form action="." role="form" method="POST">
+            {% csrf_token %}
+            <h2>Change Password</h2>
+            <input type="text" hidden="true" name="user" value="{{user}}">
+            <input id="psr_pswd1" type="password" name="password" placeholder="password" onchange="password_validity('psr_pswd1');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
+            <input id="psr_pswd2" type="password" name="password2" placeholder="confirm password" onchange="password_validity('psr_pswd2');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
+            <br>
+            <input id="tv3" type="button" value="show password" style="width: auto;" onclick="toggle_visibility3()">
+            <input type="button" value="suggest password" style="width: auto;" onclick="suggest_password3()">
+            <input type="submit" value="Change Password" name="psr_page">
+        </form>
+    </div>
+    {% endif %}
+
+
+    <!-- Password reset verify OTP  -->
+    {% if code4 %}
+    <div style="text-align: center; margin-top: 20px;">
+        <form action="." method="POST" role="form" autocomplete="off">
+            {% csrf_token %}
+            <h2>Email verification Required</h2>
+            <p>Check your registered email and get the code.</p>
+            <input type="text" name="code" placeholder="enter the 6 digit code ..."
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+            <input type="submit" value="Confirm" name="new_user_otp">
+        </form>
+    </div>
+    {% endif %}
+
+
+    {% if request.user.is_anonymous %}
+    <!-- home modal -->
+    {% if not code %}
+    {% if not code2 %}
+    {% if not code3 %}
+    {% if not code4 %}
+    <div id="home-modal" style="text-align: center;">
+        <p>Welcome to our cutting-edge password manager, the ultimate solution to your security needs! Say goodbye to the headache
+        of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad protection for
+        all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust, unique
+        passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with ease. Your
+        digital fortress awaits - experience unrivaled peace of mind and take control of your online security today!</p>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    {% endif %}
+
+    {% if not request.user.is_anonymous %}
+    <div id="home-modal2" style="display: none; text-align: center;">
+        <p>Welcome to our cutting-edge password manager, the ultimate solution to your security needs! Say goodbye to the
+            headache
+            of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad protection
+            for
+            all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust, unique
+            passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with ease. Your
+            digital fortress awaits - experience unrivaled peace of mind and take control of your online security today!</p>
+    </div>
+    {% endif %}
+
+
+
+    <!--Modals-->
+    <div class="modals-wrapper">
+        <span id="close-modal" title="close"><i class="fa fa-times" aria-hidden="true"></i></span>
+        <!--login modal-->
+        <div class="modal" id="login-modal">
+            <form action="." role="form" method="POST">
+                {% csrf_token %}
+                <h2>Login</h2>
+                <input id="rv6" type="text" name="username" placeholder="username" onclick="username_validity('rv6');" pattern="^[a-zA-Z0-9]{4,30}$" maxlength="30" required>
+                <input id="rv7" type="password" name="password" placeholder="password" onchange="password_validity('rv7');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
+                <input type="submit" value="login" name="login_form_page"><br>
+                <input id="tt1" type="button" value="show password" onclick="toggle_visibility('rv7', 'tt1')">
+                <input type="button" value="Forgot/Change Password" onclick="close_login(); displayModal('pswd-reset-modal');">
+            </form>
+        </div>
+
+        <!-- Password Reset Modal -->
+        <div class="modal" id="pswd-reset-modal">
+            <form action="." role="form" method="POST">
+                {% csrf_token %}
+                <h2>Password Reset</h2>
+                <input id="rv8" type="text" name="username" placeholder="username" onclick="username_validity('rv8');" pattern="^[a-zA-Z0-9]{5,30}$" maxlength="30" required>
+                <input type="submit" value="Proceed" name="pswd_reset_username_entry">
+            </form>
+        </div>
+
+        <!--signup modal-->
+        <div class="modal" id="signup-modal">
+            <form action="." role="form" method="POST">
+                {% csrf_token %}
+                <h2>SignUp</h2>
+                <input id="rv9" type="text" name="username" placeholder="username" onclick="username_validity('rv8');" pattern="^[a-zA-Z0-9]{5,30}$" maxlength="30" required>
+                <input id="rv10" type="email" name="email" placeholder="email" onchange="email_validity('rv10');" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
+                <input id="signup_pswd1" type="password" name="password" placeholder="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
+                <input id="signup_pswd2" type="password" name="password2" placeholder="confirm password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required>
+                <br>
+                <input id="tv2" type="button" value="show password" style="width: auto;" onclick="toggle_visibility2()">
+                <input type="button" value="suggest password" style="width: auto;" onclick="suggest_password2()">
+                <input type="submit" value="continue" name="signup_page">
+            </form>
+        </div>
+
+
+
+        <!--add password modal-->
+        <div class="modal" id="add-password-modal">
+            <form action="." role="form" method="POST">
+                {% csrf_token %}
+                <h2>Add new password</h2>
+                <input id="apurl" type="text" name="url" placeholder="url of website" onchange="url_validity('apurl');" pattern="^(https?|ftp):\/\/[a-zA-Z0-9\/\.]+$" maxlength="30" required>
+                <input id="apemail" type="email" name="email" placeholder="email" onchange="email_validity('apemail');" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
+                <input id="add_pswd_pswd" type="password" name="password" placeholder="password" onchange="password_validity('add_pswd_pswd');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required><br>
+                <input id="tv1" type="button" value="show password" style="width: auto;" onclick="toggle_visibility1()">
+                <input id="sp1" type="button" value="suggest password" style="width: auto;" onclick="suggest_password1()">
+                <input type="submit" value="save" name="add_password_page">
+            </form>
+        </div>
+
+        <!--modify password modal-->
+        <div class="modal" id="modify-password-modal">
+            <form action="." role="form" method="POST">
+                {% csrf_token %}
+                <h2>Modify password</h2>
+                <input id="apurl2" type="text" name="url" placeholder="url of website" onchange="url_validity('apurl2');"
+                    pattern="^(https?|ftp):\/\/[a-zA-Z0-9\/\.]+$" maxlength="30" required>
+                <input id="apemail2" type="email" name="email" placeholder="email" onchange="email_validity('apemail2');"
+                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
+                <input id="add_pswd_pswd2" type="password" name="password" placeholder="password"
+                    onchange="password_validity('add_pswd_pswd2');"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required><br>
+                <input id="mpid" type="text" hidden="true" name="password-val">
+                <input id="tv12" type="button" value="show password" style="width: auto;" onclick="toggle_visibility12()">
+                <input id="sp12" type="button" value="suggest password" style="width: auto;" onclick="suggest_password12()">
+                <input type="submit" value="modify" name="modify_password_page">
+            </form>
+        </div>
+
+
+    </div>
+    {% if not request.user.is_anonymous %}
+    <form action="." role="form" method="POST" id="search_bar_id">
+        {% csrf_token %}
+        <center><input type="text" placeholder="Search" name="search_text"  style="margin-top: 50px; width: 700px;" pattern="^[a-zA-Z0-9]{1,30}$" maxlength="30" required value={{search_text}}></center>
+        <center><input type="submit" value="Filter" name="search_button" style="width: auto;">
+            <script>
+                function myFunction() {
+                    var input = document.getElementsByName("search_text")[0];
+                    var value = input.value;
+                }
+            </script>
+    </form>
+    <form action="." role="form" method="POST">
+        {% csrf_token %}
+        <center><input type="submit" value="Show All" name="show_all_btn" style="width: auto;">
+    </form>
+{% endif %}
+<div class="container" id="my_passwords">
+    <!--One card-->
+    {% for password in passwords %}
+    <div class="card">
+        <div class="actions">&nbsp;Actions <i class="fa fa-arrow-down" aria-hidden="true"></i>
+            <a href="javascript:;" onclick="document.getElementById('delete-btn{{password.val}}').click();"
+                class="action-item">Delete</a>
+            <form hidden="true" action="." method="POST">
+                {% csrf_token %}
+                <input type="text" hidden="true" name="password-val" value="{{password.val}}">
+                <input type="submit" id="delete-btn{{password.val}}" name="delete_button">
+            </form>
+
+            <!-- <a href="javascript:;" onclick="document.getElementById('modify-btn{{password.val}}').click();"
+                class="action-item">Modify</a>
+            <form hidden="true" action="." method="POST">
+                {% csrf_token %}
+                <input type="text" hidden="true" name="password-val" value="{{password.val}}">
+                <input type="button" id="modify-btn{{password.val}}" name="modify_button" onclick="displayModal('modify-password-modal');">
+            </form> -->
+        </div>
+        <img width="50" height="50" src="{{password.logo}}" alt="">
+        <div class="name"> {{password.name}}</div>
+        <!-- password modal-->
+        <input type="email" name="email" value="{{password.email}}" id="entry1{{password.val}}"><i class="fas fa-copy copy"
+            title="copy to clipboard" onclick="copy1('entry1{{password.val}}');"></i>
+        <p>Password</p>
+        <input type="password" name="username" value="{{password.password}}" id="entry2{{password.val}}"><i class="fas fa-copy copy"
+            title="copy to clipboard" onclick="copy1('entry2{{password.val}}');"></i>
+            <input id="tv32{{password.val}}" type="button" value="show password" style="width: auto;" onclick="toggle_visibility('entry2{{password.val}}', 'tv32{{password.val}}')">
+            <input id="tv33{{password.val}}" type="button" value="modify" style="width: auto;" onclick="fill_values('{{password.name}}','{{password.email}}','{{password.password}}', '{{password.val}}'); displayModal('modify-password-modal')">
+    </div>
+
+
+    {% endfor %}
+
+</div>
+
+
+</body>
+
+</html>
