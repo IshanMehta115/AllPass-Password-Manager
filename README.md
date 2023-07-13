@@ -1,7 +1,7 @@
 # AllPass Password Manager
 
 <p align="center">
-  <img src="https://github.com/IshanMehta115/AllPass-Password-Manager/blob/main/ss.PNG" alt="Webpage Screenshot" width="800px">
+  <img src="https://github.com/IshanMehta115/AllPass-Password-Manager/blob/main/pic.PNG" alt="Webpage Screenshot" width="800px">
 </p>
 
 AllPass Password Manager is a secure and user-friendly password management application built using Django. It focuses on both cybersecurity and usability, providing a comprehensive solution for storing and managing user passwords.
