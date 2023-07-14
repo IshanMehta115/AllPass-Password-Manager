@@ -61,8 +61,8 @@ def home(request):
 
             else:
                 new_user_data = [user_name, email, pswd]
-                # otp = str(random.randint(100000, 999999))
-                otp = str(1234)
+                otp = str(random.randint(100000, 999999))
+                # otp = str(1234)
                 global_code = otp
                 otp_purpose = "signup"
                 send_mail(
@@ -142,8 +142,8 @@ def home(request):
                 return HttpResponseRedirect("msg.html")
                 # print_and_exit(request, msg,"error")
             else:
-                # otp = str(random.randint(100000, 999999))
-                otp = str(1234)
+                otp = str(random.randint(100000, 999999))
+                # otp = str(1234)
                 global_code = otp
                 otp_purpose = "login"
                 send_mail(
@@ -178,8 +178,8 @@ def home(request):
                 return HttpResponseRedirect("msg.html")
             
             else:
-                # otp = str(random.randint(100000, 999999))
-                otp = str(1234)
+                otp = str(random.randint(100000, 999999))
+                # otp = str(1234)
                 global_code = otp
                 otp_purpose = "password_reset"
                 send_mail(
@@ -308,8 +308,8 @@ def home(request):
 
 
         elif 'delete_account_post' in request.POST:
-            # otp = str(random.randint(100000, 999999))
-            otp = str(1234)
+            otp = str(random.randint(100000, 999999))
+            # otp = str(1234)
             global_code = otp
             otp_purpose = "account_delete"
             send_mail(
