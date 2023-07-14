@@ -1,0 +1,24 @@
+.pointer_change:hover {
+    cursor: pointer;
+}
+.form-check-input{
+    cursor: pointer;
+}
+.custom-margin{
+    margin-left: 30%;
+    margin-right: 30%;
+}
+.min_width {
+    min-width: 400px;
+}
+.no_pointer:hover {
+    cursor: default;
+}
+
+@media (max-width: 991px) {
+
+    .custom-margin {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}

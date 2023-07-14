@@ -1,5 +1,6 @@
 
 from pathlib import Path
+# from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'YOUR KEY'
+SECRET_KEY = b'django-insecure-xn2je#=+pbour0we7ec1*pt+xk2hhhgvx#-aj*rt-93%)@&$f7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'ratelimit',
     'APPNAME',
 ]
 
@@ -37,6 +39,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'ratelimit.middleware.RatelimitMiddleware',
 ]
 
 ROOT_URLCONF = 'PROJECTNAME.urls'
@@ -120,10 +123,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-# EMAIL_HOST_USER = "ENTER YOUR ID"
-# EMAIL_HOST_PASSWORD = "ENTER YOUR PASSWORD"
-EMAIL_USE_TLS = True
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "YOUR_EMAIL-ID"
+EMAIL_HOST_PASSWORD = "YOUR_EMAIL-ID's_PASSWORD"
+EMAIL_USE_SSL = True
 
 
-KEY = 'YOUR KEY'
+KEY = b'v8Jg_MxD23z5U20QIAhgyrqnCLTbOGbj9oJHwr2VkUA='
+
+
+# RATELIMIT_RESPONSE = {
+#     'message': 'Too many requests, try again later.',
+#     'status': 429,
+# }

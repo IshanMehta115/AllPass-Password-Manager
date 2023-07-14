@@ -1,287 +1,724 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllPass Password Manager</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'style2.css' %}">
-    <script src="{% static 'main1.js' %}" defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>All Pass Password Manager</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+    <script src="{% static 'main.js' %}" defer></script>
 </head>
 
-<body>
+<body class="bg-secondary">
+    <nav class="navbar bg-dark shadow-lg">
 
-    <header>
-        <nav>
-            <div class="brand"><a href=""><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;All Pass</a></div>
-            <ul>
-                {% if request.user.is_anonymous %}
-                <li><a href="javascript:;" onclick="displayModal('login-modal');" style="display: block; font-size: large;">Login</a></li>
-                <li><a href="javascript:;" onclick="displayModal('signup-modal');" style="display: block; font-size: large;">SignUp</a></li>
-                <!-- <li><a href="javascript:;" onclick="displayModal('pswd-reset-modal');">Password Reset</a></li> -->
-                {% else %}
-                <li><a id="toggle_btn" href="javascript:;" onclick="toggle_display('home-modal2','my_passwords','toggle_btn','search_bar_id')" style="display: block; font-size: large;">About the app</a></li>
-                <li><a href="javascript:;" onclick="displayModal('add-password-modal');" style="display: block; font-size: large;">Add</a></li>
-                <li><a href="javascript:;" onclick="document.getElementById('logout-btn').click();" style="display: block; font-size: large;" >Logout</a></li>
-                <form hidden="true" action="." method="POST">
-                    {% csrf_token %}
-                    <input type="submit" id="logout-btn" name="logout_page">
-                </form>
-                {% endif %}
-            </ul>
-        </nav>
-    </header>
-
-    <!--Display messages-->
-    {% if messages %}
-    <div class="messages" style="text-align: center;">
-        {% for message in messages %}
-        <p>
-            {% if message.tags == "error" %}
-            <i class="fa fa-exclamation" aria-hidden="true"></i>
+        <div class="container">
+            <a class="navbar-brand" href="">
+                <h1 class="text-light"><i class="bi bi-shield-lock-fill"></i>All-Pass</h1>
+            </a>
+            {% if request.user.is_anonymous %}
+            <div class="bg-transparent d-lg-inline-flex d-none p-2 flex-row justify-content-end" style="width:30%;">
+                <button type="button" class="btn btn-outline-warning mx-2" data-bs-toggle="modal"
+                    data-bs-target="#login_modal">Log In</button>
+                <button type="button" class="btn btn-outline-warning mx-2" data-bs-toggle="modal"
+                    data-bs-target="#signup_modal">Sign Up</button>
+            </div>
+            <div class="btn-group d-block d-lg-none">
+                <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Options
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#login_modal">Login</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#signup_modal">Sign up</a></li>
+                </ul>
+            </div>
             {% else %}
-            <i class="fa fa-check" aria-hidden="true"></i>
+            <div class="bg-transparent d-lg-inline-flex d-none p-2 flex-row justify-content-end" style="width:50%;">
+                <button id="display_button" type="button" class="btn btn-outline-warning mx-2"
+                    onclick="toggle_display('display_button')">About the app</button>
+                <button type="button" class="btn btn-outline-warning mx-2" data-bs-toggle="modal"
+                    data-bs-target="#add_password_modal">Add</button>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-warning dropdown-toggle mx-2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Account
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item no_pointer" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
+                        <li><a class="dropdown-item no_pointer" onclick="document.getElementById('logout-btn').click();"><i class="bi bi-power me-2"></i>Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="btn-group d-block d-lg-none">
+                <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Options
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark ">
+                    <li><a id="display_button_link" class="dropdown-item"
+                            onclick="toggle_display('display_button_link')">About the app</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#add_password_modal">Add Password</a>
+                    </li>
+                    <hr class="dropdown-divider">
+                    <li><a class="dropdown-item no_pointer" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
+                    <li><a class="dropdown-item no_pointer" onclick=" document.getElementById('logout-btn').click();"><i
+                                class="bi bi-power me-2"></i>Log out</a></li>
+                </ul>
+            </div>
+            <form hidden="true" action="." role="form" method="POST">
+                {% csrf_token %}
+                <input type="submit" id="logout-btn" name="logout_post">
+            </form>
             {% endif %}
-            &nbsp;{{message}}
-        </p>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <!--Confirm email-->
-    {% if code %}
-    <div style="text-align: center;">
-        <form action="." method="POST" role="form" autocomplete="off">
-            {% csrf_token %}
-            <h2>Please confirm your email.</h2>
-            <p>Check your email and get the code.</p>
-            <input style="width: 30%;" type="text" name="code" placeholder="enter the 6 digit code ..."
-                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-            <input type="text" hidden="true" name="user" value="{{user.username}}"><br>
-            <input style="width: 30%;" type="submit" value="Confirm" name="confirm_button">
-        </form>
-    </div>
-    {% endif %}
-
-    <!-- Password reset verify OTP  -->
-    {% if code2 %}
-    <div style="text-align: center; margin-top: 20px;">
-        <form action="." method="POST" role="form" autocomplete="off">
-            {% csrf_token %}
-            <h2>OTP verification Required</h2>
-            <p>Check your registered email and get the code.</p>
-            <input type="text" name="code" placeholder="enter the 6 digit code ..."
-                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-            <input type="text" hidden="true" name="user" value="{{user.username}}">
-            <input type="submit" value="Confirm" name="pswd-reset-otp-entry">
-        </form>
-    </div>
-    {% endif %}
-
-
-    {% if code3 %}
-    <div class="modal" style="display: flex;" id="psr_page">
-        <form action="." role="form" method="POST">
-            {% csrf_token %}
-            <h2>Change Password</h2>
-            <input type="text" hidden="true" name="user" value="{{user}}">
-            <input id="psr_pswd1" type="password" name="password" placeholder="password" onchange="password_validity('psr_pswd1');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
-            <input id="psr_pswd2" type="password" name="password2" placeholder="confirm password" onchange="password_validity('psr_pswd2');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
-            <br>
-            <input id="tv3" type="button" value="show password" style="width: auto;" onclick="toggle_visibility3()">
-            <input type="button" value="suggest password" style="width: auto;" onclick="suggest_password3()">
-            <input type="submit" value="Change Password" name="psr_page">
-        </form>
-    </div>
-    {% endif %}
-
-
-    <!-- Password reset verify OTP  -->
-    {% if code4 %}
-    <div style="text-align: center; margin-top: 20px;">
-        <form action="." method="POST" role="form" autocomplete="off">
-            {% csrf_token %}
-            <h2>Email verification Required</h2>
-            <p>Check your registered email and get the code.</p>
-            <input type="text" name="code" placeholder="enter the 6 digit code ..."
-                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-            <input type="submit" value="Confirm" name="new_user_otp">
-        </form>
-    </div>
-    {% endif %}
-
-
+        </div>
+    </nav>
     {% if request.user.is_anonymous %}
-    <!-- home modal -->
-    {% if not code %}
-    {% if not code2 %}
-    {% if not code3 %}
-    {% if not code4 %}
-    <div id="home-modal" style="text-align: center;">
-        <p>Welcome to our cutting-edge password manager, the ultimate solution to your security needs! Say goodbye to the headache
-        of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad protection for
-        all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust, unique
-        passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with ease. Your
-        digital fortress awaits - experience unrivaled peace of mind and take control of your online security today!</p>
+    <div class="container-xxl bg-transparent mt-5 w-100">
+        <p class=" p-5 fs-5 text-dark d-lg-block d-none">
+            <strong> The All-Pass password manager application is a secure and convenient solution designed to help users manage their passwords
+            effectively. It offers the following features:</strong>
+
+            <ol class="mx-3">
+                <li class="fs-5 mt-3">
+                    <strong>Create, Read, Update, Delete Passwords:</strong><br>
+                    Users can create new passwords for their various accounts, store them securely, retrieve passwords when needed, update
+                    existing passwords, and delete passwords that are no longer required.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>Create, Access, Delete Your Account:</strong><br>
+                    The application allows users to create their accounts with unique credentials, providing a personalized and secure
+                    environment. Users can access their accounts by logging in with their credentials, and if needed, they can delete their
+                    accounts and associated data.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>Automatic Icon Extraction:</strong><br>
+                    The password manager incorporates automatic icon extraction, which retrieves icons or logos associated with saved
+                    websites or services. This feature enhances user experience and visual recognition of stored passwords.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>AES Encryption Scheme:</strong><br>
+                    The application utilizes the AES (Advanced Encryption Standard) encryption scheme to encrypt and decrypt passwords. AES
+                    is a widely recognized and secure symmetric encryption algorithm that ensures the confidentiality and integrity of
+                    stored passwords.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>Input Sanitation to Protect from XSS Attacks:</strong><br>
+                    The application implements input sanitation techniques to safeguard against cross-site scripting (XSS) attacks. By
+                    sanitizing user input, it prevents malicious code from being injected and executed within the application, ensuring data
+                    integrity and user security.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>CSRF Tokens:</strong><br>
+                    The application employs CSRF (Cross-Site Request Forgery) tokens to mitigate CSRF attacks. CSRF tokens add an additional
+                    layer of security by validating the origin of each request, protecting against unauthorized actions initiated by
+                    external sources.
+                </li>
+                <li class="fs-5 mt-3">
+                    <strong>OTP Verification for Enhanced Security:</strong>><br>
+                    The password manager application implements OTP (One-Time Password) verification. It sends a unique OTP to users'
+                    registered email or phone number for critical actions such as account creation, password recovery, or sensitive updates.This extra layer of security prevents unauthorized access and safeguards user accounts.
+                </li>
+            </ol>
+            
+            
+            
+            
+            
+            
+
+            
+            
+            
+            
+        </p>
+        <p class="text-center p-5 fw-bolder fs-6 text-dark d-lg-none d-block">Welcome to our cutting-edge password
+            manager, the
+            ultimate
+            solution to your
+            security needs Say goodbye to the headache
+            of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad
+            protection for
+            all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust,
+            unique
+            passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with
+            ease.
+            Your
+            digital fortress awaits - experience unrivaled peace of mind and take control of your online security today
+        </p>
     </div>
-    {% endif %}
-    {% endif %}
-    {% endif %}
-    {% endif %}
-
-    {% endif %}
-
-    {% if not request.user.is_anonymous %}
-    <div id="home-modal2" style="display: none; text-align: center;">
-        <p>Welcome to our cutting-edge password manager, the ultimate solution to your security needs! Say goodbye to the
-            headache
-            of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad protection
-            for
-            all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust, unique
-            passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with ease. Your
-            digital fortress awaits - experience unrivaled peace of mind and take control of your online security today!</p>
+    {% else %}
+    <div id="about_info" class="container-xxl bg-transparent mt-5 w-100 visually-hidden">
+        <p class="text-center p-5 fw-bolder fs-5 text-dark d-lg-block d-none">Welcome to our cutting-edge password
+            manager, the
+            ultimate
+            solution to your
+            security needs Say goodbye to the headache
+            of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad
+            protection for
+            all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust,
+            unique
+            passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with
+            ease.
+            Your
+            digital fortress awaits - experience unrivaled peace of mind and take control of your online security today
+        </p>
+        <p class="text-center p-5 fw-bolder fs-6 text-dark d-lg-none d-block">Welcome to our cutting-edge password
+            manager, the
+            ultimate
+            solution to your
+            security needs Say goodbye to the headache
+            of remembering countless passwords and the risk of using weak ones. Our innovative tool ensures ironclad
+            protection for
+            all your online accounts. With our password manager, you'll enjoy the freedom to generate and store robust,
+            unique
+            passwords effortlessly. Embrace the convenience of auto-fill features and securely share passwords with
+            ease.
+            Your
+            digital fortress awaits - experience unrivaled peace of mind and take control of your online security today
+        </p>
     </div>
-    {% endif %}
-
-
-
-    <!--Modals-->
-    <div class="modals-wrapper">
-        <span id="close-modal" title="close"><i class="fa fa-times" aria-hidden="true"></i></span>
-        <!--login modal-->
-        <div class="modal" id="login-modal">
-            <form action="." role="form" method="POST">
+    <div id="password_details" class="container mt-5 bg-transparent">
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <form class="d-flex bg custom-margin" action="." role="form" method="POST">
                 {% csrf_token %}
-                <h2>Login</h2>
-                <input id="rv6" type="text" name="username" placeholder="username" onclick="username_validity('rv6');" pattern="^[a-zA-Z0-9]{4,30}$" maxlength="30" required>
-                <input id="rv7" type="password" name="password" placeholder="password" onchange="password_validity('rv7');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
-                <input type="submit" value="login" name="login_form_page"><br>
-                <input id="tt1" type="button" value="show password" onclick="toggle_visibility('rv7', 'tt1')">
-                <input type="button" value="Forgot/Change Password" onclick="close_login(); displayModal('pswd-reset-modal');">
+                <input id="search_bar_id" class="form-control me-2" type="search" placeholder="Search"
+                    aria-label="Search" name="search_text" value="{{search_text}}" maxlength="25"
+                    data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="left"
+                    data-bs-title="Only alphabets and digits allowed.">
+                <button class="btn btn-warning mx-2" type="button" onclick="check_search_bar()">Filter</button>
+                <button hidden="true" id="search_button" class="btn btn-warning mx-2" type="submit"
+                    name="search_post">Filter</button>
+            </form>
+            <form class="bg-transparent" action="." role="form" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning mt-3" style="width: fit-content;" name="show_all_post">View
+                    All</button>
             </form>
         </div>
 
-        <!-- Password Reset Modal -->
-        <div class="modal" id="pswd-reset-modal">
-            <form action="." role="form" method="POST">
-                {% csrf_token %}
-                <h2>Password Reset</h2>
-                <input id="rv8" type="text" name="username" placeholder="username" onclick="username_validity('rv8');" pattern="^[a-zA-Z0-9]{5,30}$" maxlength="30" required>
-                <input type="submit" value="Proceed" name="pswd_reset_username_entry">
-            </form>
+        <div class="bg-transparent container mt-5">
+            <div class="row">
+                {% for password in passwords %}
+                <div class="col-lg-4">
+                    <div class="card mx-2 mb-5 bg-dark-subtle">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">{{password.name}}</h4>
+                            <div class="text-center">
+                                <img src="https://www.vectorlogo.zone/logos/{{password.logo}}/{{password.logo}}-icon.svg"
+                                    class="img-thumbnail center" alt="logo">
+                            </div>
+                            <form action="." role="form" method="POST" class="mt-3">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <div class="d-flex">
+                                        <label for="disabledTextInput{{password.val}}"
+                                            class="form-label mx-2">Email-Id</label>
+                                        <div class="pointer_change mx-2" data-bs-toggle="tooltip"
+                                            data-bs-title="Copy to clipboard"
+                                            onclick="copy_to_clipboard('disabledTextInput{{password.val}}');">
+                                            <svg class="mb-2" xmlns="http://www.w3.org/2000/svg" height="1em"
+                                                viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                                <path
+                                                    d="M272 0H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H272c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128H192v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="disabledTextInput{{password.val}}" class="form-control"
+                                        value="{{password.email}}" readonly="readonly">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <div class="d-flex">
+                                        <label for="disabledTextInput2{{password.val}}"
+                                            class="form-label mx-2">Password</label>
+                                        <div class="pointer_change mx-2" data-bs-toggle="tooltip"
+                                            data-bs-title="Copy to clipboard"
+                                            onclick="copy_to_clipboard('disabledTextInput2{{password.val}}');">
+                                            <!-- <a href="#" data-bs-toggle="tooltip" data-bs-title="Another tooltip"></a> -->
+                                            <svg class="mb-2" xmlns="http://www.w3.org/2000/svg" height="1em"
+                                                viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                                <path
+                                                    d="M272 0H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H272c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128H192v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <input type="password" id="disabledTextInput2{{password.val}}" class="form-control"
+                                        value="{{password.password}}" readonly="readonly">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input"
+                                        id="show_password_Check5{{password.val}}"
+                                        onchange="toggle_visibility('show_password_Check5{{password.val}}',['disabledTextInput2{{password.val}}'])">
+                                    <label class="form-check-label" for="show_password_Check5{{password.val}}">Show
+                                        Password</label>
+                                </div>
+                                <div class="modal-footer d-flex flex-column">
+                                    <div>
+                                        <button type="button" class="btn btn-warning"
+                                            onclick="fill_values('{{password.name}}','{{password.email}}','{{password.password}}', '{{password.val}}')"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modify_password_modal">Modify</button>
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                            data-bs-target="#confirm_delete_modal"
+                                            onclick='set_password_val("{{password.val}}")'>Delete</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-
-        <!--signup modal-->
-        <div class="modal" id="signup-modal">
-            <form action="." role="form" method="POST">
-                {% csrf_token %}
-                <h2>SignUp</h2>
-                <input id="rv9" type="text" name="username" placeholder="username" onclick="username_validity('rv8');" pattern="^[a-zA-Z0-9]{5,30}$" maxlength="30" required>
-                <input id="rv10" type="email" name="email" placeholder="email" onchange="email_validity('rv10');" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
-                <input id="signup_pswd1" type="password" name="password" placeholder="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{10,25}$" required>
-                <input id="signup_pswd2" type="password" name="password2" placeholder="confirm password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required>
-                <br>
-                <input id="tv2" type="button" value="show password" style="width: auto;" onclick="toggle_visibility2()">
-                <input type="button" value="suggest password" style="width: auto;" onclick="suggest_password2()">
-                <input type="submit" value="continue" name="signup_page">
-            </form>
-        </div>
-
-
-
-        <!--add password modal-->
-        <div class="modal" id="add-password-modal">
-            <form action="." role="form" method="POST">
-                {% csrf_token %}
-                <h2>Add new password</h2>
-                <input id="apurl" type="text" name="url" placeholder="url of website" onchange="url_validity('apurl');" pattern="^(https?|ftp):\/\/[a-zA-Z0-9\/\.]+$" maxlength="30" required>
-                <input id="apemail" type="email" name="email" placeholder="email" onchange="email_validity('apemail');" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
-                <input id="add_pswd_pswd" type="password" name="password" placeholder="password" onchange="password_validity('add_pswd_pswd');" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required><br>
-                <input id="tv1" type="button" value="show password" style="width: auto;" onclick="toggle_visibility1()">
-                <input id="sp1" type="button" value="suggest password" style="width: auto;" onclick="suggest_password1()">
-                <input type="submit" value="save" name="add_password_page">
-            </form>
-        </div>
-
-        <!--modify password modal-->
-        <div class="modal" id="modify-password-modal">
-            <form action="." role="form" method="POST">
-                {% csrf_token %}
-                <h2>Modify password</h2>
-                <input id="apurl2" type="text" name="url" placeholder="url of website" onchange="url_validity('apurl2');"
-                    pattern="^(https?|ftp):\/\/[a-zA-Z0-9\/\.]+$" maxlength="30" required>
-                <input id="apemail2" type="email" name="email" placeholder="email" onchange="email_validity('apemail2');"
-                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" maxlength="30" required>
-                <input id="add_pswd_pswd2" type="password" name="password" placeholder="password"
-                    onchange="password_validity('add_pswd_pswd2');"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,25}$" required><br>
-                <input id="mpid" type="text" hidden="true" name="password-val">
-                <input id="tv12" type="button" value="show password" style="width: auto;" onclick="toggle_visibility12()">
-                <input id="sp12" type="button" value="suggest password" style="width: auto;" onclick="suggest_password12()">
-                <input type="submit" value="modify" name="modify_password_page">
-            </form>
-        </div>
-
-
-    </div>
-    {% if not request.user.is_anonymous %}
-    <form action="." role="form" method="POST" id="search_bar_id">
-        {% csrf_token %}
-        <center><input type="text" placeholder="Search" name="search_text"  style="margin-top: 50px; width: 700px;" pattern="^[a-zA-Z0-9]{1,30}$" maxlength="30" required value={{search_text}}></center>
-        <center><input type="submit" value="Filter" name="search_button" style="width: auto;">
-            <script>
-                function myFunction() {
-                    var input = document.getElementsByName("search_text")[0];
-                    var value = input.value;
-                }
-            </script>
-    </form>
-    <form action="." role="form" method="POST">
-        {% csrf_token %}
-        <center><input type="submit" value="Show All" name="show_all_btn" style="width: auto;">
-    </form>
-{% endif %}
-<div class="container" id="my_passwords">
-    <!--One card-->
-    {% for password in passwords %}
-    <div class="card">
-        <div class="actions">&nbsp;Actions <i class="fa fa-arrow-down" aria-hidden="true"></i>
-            <a href="javascript:;" onclick="document.getElementById('delete-btn{{password.val}}').click();"
-                class="action-item">Delete</a>
-            <form hidden="true" action="." method="POST">
-                {% csrf_token %}
-                <input type="text" hidden="true" name="password-val" value="{{password.val}}">
-                <input type="submit" id="delete-btn{{password.val}}" name="delete_button">
-            </form>
-
-            <!-- <a href="javascript:;" onclick="document.getElementById('modify-btn{{password.val}}').click();"
-                class="action-item">Modify</a>
-            <form hidden="true" action="." method="POST">
-                {% csrf_token %}
-                <input type="text" hidden="true" name="password-val" value="{{password.val}}">
-                <input type="button" id="modify-btn{{password.val}}" name="modify_button" onclick="displayModal('modify-password-modal');">
-            </form> -->
-        </div>
-        <img width="50" height="50" src="{{password.logo}}" alt="">
-        <div class="name"> {{password.name}}</div>
-        <!-- password modal-->
-        <input type="email" name="email" value="{{password.email}}" id="entry1{{password.val}}"><i class="fas fa-copy copy"
-            title="copy to clipboard" onclick="copy1('entry1{{password.val}}');"></i>
-        <p>Password</p>
-        <input type="password" name="username" value="{{password.password}}" id="entry2{{password.val}}"><i class="fas fa-copy copy"
-            title="copy to clipboard" onclick="copy1('entry2{{password.val}}');"></i>
-            <input id="tv32{{password.val}}" type="button" value="show password" style="width: auto;" onclick="toggle_visibility('entry2{{password.val}}', 'tv32{{password.val}}')">
-            <input id="tv33{{password.val}}" type="button" value="modify" style="width: auto;" onclick="fill_values('{{password.name}}','{{password.email}}','{{password.password}}', '{{password.val}}'); displayModal('modify-password-modal')">
     </div>
 
+    {% endif %}
 
-    {% endfor %}
 
-</div>
+    <!-- Confirm password delete modal -->
+    <div class="modal fade" id="confirm_delete_modal" tabindex="-1" aria-labelledby="confirm_delete_modal_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark-subtle">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 fw-bolder" id="confirm_delete_modal_ModalLabel">Confirm Delete?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <input id="confirm_delete_modal_password_val" type="text" hidden="true" name="password-val"
+                            value="{{password.val}}">
+                        <p>Do you want to delete this entry? Once deleted the data cannot be recovered.</p>
+                        <div class="modal-footer center">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">No, Keep it.</button>
+                            <button type="submit" name="delete_password_post" class="btn btn-warning">Yes, Delete
+                                it.</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+
+    <!-- Confirm account delete modal  -->
+    <div class="modal fade" id="confirm_account_modal" tabindex="-1" aria-labelledby="confirm_account_modal_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark-subtle">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 fw-bolder" id="confirm_account_modal_ModalLabel">Confirm Delete?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <p>Do you want to delete your account? Once deleted the data cannot be recovered.</p>
+                        <div class="modal-footer center">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">No, Keep it.</button>
+                            <button type="submit" name="delete_account_post" class="btn btn-warning">Yes, Delete
+                                it.</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Signup_Modal -->
+    <div class="modal fade" id="signup_modal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="signupModalLabel">Sign Up</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="username_input_signup" placeholder="Username"
+                                name="username" maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Only alphabets and digits allowed. Minimum 5 characters.">
+
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="email_input_signup"
+                                aria-describedby="emailHelp" placeholder="Email address" name="email" maxlength="25"
+                                data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should be a valid email-id.">
+                            <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
+                        </div>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password_input_signup"
+                                placeholder="Password" name="password" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should have atleast one lowercase letter, one uppercase letter, one digit and one special character out of only (!@#$%^&*()). Minimum 18 letters long.">
+                            <!-- <i class="fa fa-eye mx-2" onclick="suggest_password(['password_input_signup', 'password2_input_signup'])"></i> -->
+                        </div>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password2_input_signup"
+                                placeholder="Confirm Password" name="password2" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should match the password entered.">
+                            <!-- <i class="fa fa-eye-slash mx-2"></i> -->
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_password_Check"
+                                onchange="toggle_visibility('show_password_Check',['password_input_signup', 'password2_input_signup'])">
+                            <label class="form-check-label" for="show_password_Check">Show Password</label>
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="suggest_password(['password_input_signup', 'password2_input_signup'])">Suggest
+                                    Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_signup_modal()">Continue</button>
+                                <button hidden="true" id="signup_continue" type="submit" class="btn btn-warning"
+                                    name="signup_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- add_password_Modal -->
+    <div class="modal fade" id="add_password_modal" tabindex="-1" aria-labelledby="add_password_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="add_password_ModalLabel">Add
+                        new password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="application_name_input_add_password"
+                                placeholder="App Name" name="application_name" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Only alphabets and digits allowed. Minimum 5 characters.">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="email_input_add_password"
+                                aria-describedby="emailHelp" placeholder="Email address" name="email" maxlength="25"
+                                data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should be a valid email-id.">
+                        </div>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password_input_add_password"
+                                placeholder="Password" name="password" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should have atleast one lowercase letter, one uppercase letter, one digit and one special character out of only (!@#$%^&*()). Minimum 18 letters long.">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_password_Check4"
+                                onchange="toggle_visibility('show_password_Check4',['password_input_add_password'])">
+                            <label class="form-check-label" for="show_password_Check4">Show Password</label>
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="suggest_password(['password_input_add_password'])">Suggest
+                                    Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_add_password_modal()">Continue</button>
+                                <button hidden="true" id="add_password_continue" type="submit" class="btn btn-warning"
+                                    name="add_password_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- modify_password_modal -->
+    <div class="modal fade" id="modify_password_modal" tabindex="-1" aria-labelledby="modify_password_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="modify_password_ModalLabel">Modify
+                        Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label mx-2">Application Name</label>
+                            <input type="text" class="form-control" id="application_name_input_modify_password"
+                                name="application_name" maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Only alphabets and digits allowed. Minimum 5 characters.">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mx-2">Email-Id</label>
+                            <input type="email" class="form-control" id="email_input_modify_password"
+                                aria-describedby="emailHelp" name="email" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should be a valid email-id.">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mx-2">Password</label>
+                            <input type="password" class="form-control" id="password_input_modify_password"
+                                name="password" maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Should have atleast one lowercase letter, one uppercase letter, one digit and one special character out of only (!@#$%^&*()). Minimum 18 letters long.">
+                        </div>
+                        <input id="val_input_modify_password" type="text" hidden="true" name="password-val">
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_password_Check6"
+                                onchange="toggle_visibility('show_password_Check6',['password_input_modify_password'])">
+                            <label class="form-check-label" for="show_password_Check6">Show Password</label>
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="suggest_password(['password_input_modify_password'])">Suggest
+                                    Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_modify_password_modal()">Continue</button>
+                                <button hidden="true" id="modify_password_continue" type="submit"
+                                    class="btn btn-warning" name="modify_password_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Login_Modal -->
+    <div class="modal fade" id="login_modal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="loginModalLabel">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="username_input_login" placeholder="Username"
+                                name="username" maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Only alphabets and digits allowed. Minimum 5 characters.">
+                        </div>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password_input_login" placeholder="Password"
+                                name="password" maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Should have atleast one lowercase letter, one uppercase letter, one digit and one special character out of only (!@#$%^&*()). Minimum 18 letters long.">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_password_Check2"
+                                onchange="toggle_visibility('show_password_Check2',['password_input_login'])">
+                            <label class="form-check-label" for="show_password_Check2">Show Password</label>
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#password_reset_modal">Reset Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_login_modal()">Continue</button>
+                                <button hidden="true" id="login_continue" type="submit" class="btn btn-warning"
+                                    name="login_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- OTP_Modal -->
+    <div class="modal fade" id="otp_modal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-light fw-bolder id="otpModalLabel">OTP verification</h1>
+                    <div class="spinner-border text-warning mx-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="code_input_otp" placeholder="Code" name="code"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
+                                maxlength="6">
+                        </div>
+                        <div id="otpHelp" class="form-text text-light">We've sent an OTP to your email.</div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="submit" class="btn btn-warning" name="otp_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- password_reset_Modal -->
+    <div class="modal fade" id="password_reset_modal" tabindex="-1" aria-labelledby="password_reset_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="password_reset_ModalLabel">
+                        Password Reset</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="email_input_password_reset"
+                                aria-describedby="emailHelp" placeholder="Email address" name="email" maxlength="25"
+                                data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should be a valid email-id.">
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_password_modal()">Continue</button>
+                                <button hidden="true" id="password_reset_continue" type="submit" class="btn btn-warning"
+                                    name="password_reset_post">Continue</button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- change_password_Modal -->
+    <div class="modal fade" id="change_password_modal" tabindex="-1" aria-labelledby="change_password_ModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center text-dark fw-bolder" id="change_password_ModalLabel">
+                        Change Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="." role="form" method="POST">
+                        {% csrf_token %}
+                        <fieldset disabled>
+                            <div class="mb-3">
+                                <label for="disabledTextInput3" class="form-label">Email-Id</label>
+                                <input type="text" id="disabledTextInput3" class="form-control" placeholder="{{email}}"
+                                    maxlength="25" data-bs-trigger="hover" data-bs-toggle="tooltip"
+                                    data-bs-placement="right"
+                                    data-bs-title="Your registered Email-Id. You will recieve your OTP here.">
+                            </div>
+                        </fieldset>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password_input_change_password"
+                                placeholder="Password" name="password" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should have atleast one lowercase letter, one uppercase letter, one digit and one special character out of only (!@#$%^&*()). Minimum 18 letters long.">
+                            <!-- <i class="fa fa-eye mx-2" onclick="suggest_password(['password_input_signup', 'password2_input_signup'])"></i> -->
+                        </div>
+                        <div class="mb-3 d-flex flex-row">
+                            <input type="password" class="form-control" id="password2_input_change_password"
+                                placeholder="Confirm Password" name="password2" maxlength="25" data-bs-trigger="hover"
+                                data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-title="Should match the password entered.">
+                            <!-- <i class="fa fa-eye-slash mx-2"></i> -->
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_password_Check3"
+                                onchange="toggle_visibility('show_password_Check3',['password_input_change_password', 'password2_input_change_password'])">
+                            <label class="form-check-label" for="show_password_Check3">Show Password</label>
+                        </div>
+                        <div class="modal-footer d-flex flex-column">
+                            <div>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="suggest_password(['password_input_change_password', 'password2_input_change_password'])">Suggest
+                                    Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_change_password_modal()">Continue</button>
+                                <button hidden="true" id="change_password_continue" type="submit"
+                                    class="btn btn-warning" name="change_password_post">Continue</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+
+    <script>
+        function show_otp_modal() {
+            $(document).ready(function () {
+                $('#otp_modal').modal('show');
+            });
+        }
+
+
+        function show_change_password_modal() {
+            $(document).ready(function () {
+                $('#change_password_modal').modal('show');
+            });
+        }
+    </script>
+
+    {% if otp %}
+    <script>
+        show_otp_modal()
+    </script>
+    {% endif %}
+
+    {% if change_password %}
+    <script>
+        show_change_password_modal()
+    </script>
+    {% endif %}
 
 </body>
 
