@@ -15,7 +15,7 @@
     <script src="{% static 'main.js' %}" defer></script>
 </head>
 
-<body class="bg-secondary">
+<body class="my_body">
     <nav class="navbar bg-dark shadow-lg">
 
         <div class="container">
@@ -35,8 +35,8 @@
                     Options
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#login_modal">Login</a></li>
-                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#signup_modal">Sign up</a></li>
+                    <li><a class="dropdown-item my-dropdown-text" data-bs-toggle="modal" data-bs-target="#login_modal">Login</a></li>
+                    <li><a class="dropdown-item my-dropdown-text" data-bs-toggle="modal" data-bs-target="#signup_modal">Sign up</a></li>
                 </ul>
             </div>
             {% else %}
@@ -52,24 +52,24 @@
                         Account
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item no_pointer" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
-                        <li><a class="dropdown-item no_pointer" onclick="document.getElementById('logout-btn').click();"><i class="bi bi-power me-2"></i>Log out</a></li>
+                        <li><a class="dropdown-item no_pointer my-dropdown-text" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
+                        <li><a class="dropdown-item no_pointer my-dropdown-text" onclick="document.getElementById('logout-btn').click();"><i class="bi bi-power me-2"></i>Log out</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="btn-group d-block d-lg-none">
+            <div class="btn-group d-block d-lg-none mr-5">
                 <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     Options
                 </button>
-                <ul class="dropdown-menu dropdown-menu-dark ">
-                    <li><a id="display_button_link" class="dropdown-item"
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a id="display_button_link" class="dropdown-item my-dropdown-text"
                             onclick="toggle_display('display_button_link')">About the app</a></li>
-                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#add_password_modal">Add Password</a>
+                    <li><a class="dropdown-item my-dropdown-text" data-bs-toggle="modal" data-bs-target="#add_password_modal">Add Password</a>
                     </li>
                     <hr class="dropdown-divider">
-                    <li><a class="dropdown-item no_pointer" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
-                    <li><a class="dropdown-item no_pointer" onclick=" document.getElementById('logout-btn').click();"><i
+                    <li><a class="dropdown-item no_pointer my-dropdown-text" data-bs-toggle="modal" data-bs-target="#confirm_account_modal">Delete Account</a></li>
+                    <li><a class="dropdown-item no_pointer my-dropdown-text" onclick=" document.getElementById('logout-btn').click();"><i
                                 class="bi bi-power me-2"></i>Log out</a></li>
                 </ul>
             </div>
@@ -82,64 +82,55 @@
     </nav>
     {% if request.user.is_anonymous %}
     <div class="container-xxl bg-transparent mt-5 w-100">
-        <p class=" p-5 fs-5 text-dark d-lg-block d-none">
+        <p class=" p-5 fs-6 text-light">
             <strong> The All-Pass password manager application is a secure and convenient solution designed to help users manage their passwords
             effectively. It offers the following features:</strong>
 
-            <ol class="mx-3">
-                <li class="fs-5 mt-3">
+            <ol class="mx-3 text-light">
+                <li class="fs-6 mt-3">
                     <strong>Create, Read, Update, Delete Passwords:</strong><br>
                     Users can create new passwords for their various accounts, store them securely, retrieve passwords when needed, update
                     existing passwords, and delete passwords that are no longer required.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>Create, Access, Delete Your Account:</strong><br>
                     The application allows users to create their accounts with unique credentials, providing a personalized and secure
                     environment. Users can access their accounts by logging in with their credentials, and if needed, they can delete their
                     accounts and associated data.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>Automatic Icon Extraction:</strong><br>
                     The password manager incorporates automatic icon extraction, which retrieves icons or logos associated with saved
                     websites or services. This feature enhances user experience and visual recognition of stored passwords.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>AES Encryption Scheme:</strong><br>
                     The application utilizes the AES (Advanced Encryption Standard) encryption scheme to encrypt and decrypt passwords. AES
                     is a widely recognized and secure symmetric encryption algorithm that ensures the confidentiality and integrity of
                     stored passwords.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>Input Sanitation to Protect from XSS Attacks:</strong><br>
                     The application implements input sanitation techniques to safeguard against cross-site scripting (XSS) attacks. By
                     sanitizing user input, it prevents malicious code from being injected and executed within the application, ensuring data
                     integrity and user security.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>CSRF Tokens:</strong><br>
                     The application employs CSRF (Cross-Site Request Forgery) tokens to mitigate CSRF attacks. CSRF tokens add an additional
                     layer of security by validating the origin of each request, protecting against unauthorized actions initiated by
                     external sources.
                 </li>
-                <li class="fs-5 mt-3">
+                <li class="fs-6 mt-3">
                     <strong>OTP Verification for Enhanced Security:</strong>><br>
                     The password manager application implements OTP (One-Time Password) verification. It sends a unique OTP to users'
                     registered email or phone number for critical actions such as account creation, password recovery, or sensitive updates.This extra layer of security prevents unauthorized access and safeguards user accounts.
                 </li>
             </ol>
-            
-            
-            
-            
-            
-            
-
-            
-            
-            
-            
         </p>
-        <p class="text-center p-5 fw-bolder fs-6 text-dark d-lg-none d-block">Welcome to our cutting-edge password
+
+
+        <!-- <p class="text-center p-5 fw-bolder fs-6 text-dark d-lg-none d-block">222Welcome to our cutting-edge password
             manager, the
             ultimate
             solution to your
@@ -152,11 +143,68 @@
             ease.
             Your
             digital fortress awaits - experience unrivaled peace of mind and take control of your online security today
-        </p>
+        </p> -->
     </div>
     {% else %}
     <div id="about_info" class="container-xxl bg-transparent mt-5 w-100 visually-hidden">
-        <p class="text-center p-5 fw-bolder fs-5 text-dark d-lg-block d-none">Welcome to our cutting-edge password
+        <p class=" p-5 fs-6 text-light">
+            <strong> The All-Pass password manager application is a secure and convenient solution designed to help users manage
+                their passwords
+                effectively. It offers the following features:</strong>
+        <ol class="mx-3 text-light">
+            <li class="fs-6 mt-3">
+                <strong>Create, Read, Update, Delete Passwords:</strong><br>
+                Users can create new passwords for their various accounts, store them securely, retrieve passwords when needed,
+                update
+                existing passwords, and delete passwords that are no longer required.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>Create, Access, Delete Your Account:</strong><br>
+                The application allows users to create their accounts with unique credentials, providing a personalized and
+                secure
+                environment. Users can access their accounts by logging in with their credentials, and if needed, they can
+                delete their
+                accounts and associated data.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>Automatic Icon Extraction:</strong><br>
+                The password manager incorporates automatic icon extraction, which retrieves icons or logos associated with
+                saved
+                websites or services. This feature enhances user experience and visual recognition of stored passwords.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>AES Encryption Scheme:</strong><br>
+                The application utilizes the AES (Advanced Encryption Standard) encryption scheme to encrypt and decrypt
+                passwords. AES
+                is a widely recognized and secure symmetric encryption algorithm that ensures the confidentiality and integrity
+                of
+                stored passwords.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>Input Sanitation to Protect from XSS Attacks:</strong><br>
+                The application implements input sanitation techniques to safeguard against cross-site scripting (XSS) attacks.
+                By
+                sanitizing user input, it prevents malicious code from being injected and executed within the application,
+                ensuring data
+                integrity and user security.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>CSRF Tokens:</strong><br>
+                The application employs CSRF (Cross-Site Request Forgery) tokens to mitigate CSRF attacks. CSRF tokens add an
+                additional
+                layer of security by validating the origin of each request, protecting against unauthorized actions initiated by
+                external sources.
+            </li>
+            <li class="fs-6 mt-3">
+                <strong>OTP Verification for Enhanced Security:</strong>><br>
+                The password manager application implements OTP (One-Time Password) verification. It sends a unique OTP to
+                users'
+                registered email or phone number for critical actions such as account creation, password recovery, or sensitive
+                updates.This extra layer of security prevents unauthorized access and safeguards user accounts.
+            </li>
+        </ol>
+        </p>
+        <!-- <p class="text-center p-5 fw-bolder fs-5 text-dark d-lg-block d-none">Welcome to our cutting-edge password
             manager, the
             ultimate
             solution to your
@@ -183,7 +231,7 @@
             ease.
             Your
             digital fortress awaits - experience unrivaled peace of mind and take control of your online security today
-        </p>
+        </p> -->
     </div>
     <div id="password_details" class="container mt-5 bg-transparent">
         <div class="d-flex flex-column justify-content-center align-items-center">
