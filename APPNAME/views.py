@@ -8,6 +8,7 @@ import random
 from cryptography.fernet import Fernet
 import hashlib
 from .models import Password
+from django.utils.html import format_html
 
 
 
@@ -98,6 +99,18 @@ def home(request):
                             "text":msg, 
                             "code":True, 
                         }
+                        link = "https://ishanmehta.pythonanywhere.com/"
+                        message = format_html(
+                            "Your account was successfully created.<br> Website Link -> <a href='{}'>ishanmehta.pythonanywhere.com</a>", link
+                        )
+                        send_mail(
+                        "Welcome to All-Pass.",
+                        message,
+                        settings.EMAIL_HOST_USER,
+                        [new_user_data[1]],
+                        fail_silently=False,
+                        html_message=message,
+                    )
                     return HttpResponseRedirect("msg.html")
                 
                 elif(otp_purpose=="login"):
@@ -316,7 +329,7 @@ def home(request):
                 "AllPass Password Manager: Account Delete",
                 f"Your otp for password account deletion is {otp}.",
                 settings.EMAIL_HOST_USER,
-                [email],
+                [request.user.email],
                 fail_silently=False,
             )
             return render(request, "home.html", {
