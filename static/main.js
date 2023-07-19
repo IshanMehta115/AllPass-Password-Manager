@@ -176,6 +176,7 @@ function check_password2(pswd1, pswd2){
     return pswd1==pswd2;
 }
 function check_email(value) {
+    if(value.length==0) return false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
 }
