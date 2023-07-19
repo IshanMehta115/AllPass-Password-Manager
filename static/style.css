@@ -14,7 +14,12 @@
 .no_pointer:hover {
     cursor: default;
 }
-
+.my_body{
+    background-color: rgb(55, 62, 69);
+}
+.my-dropdown-text{
+    font-size: 0.75rem;
+}
 @media (max-width: 991px) {
 
     .custom-margin {
