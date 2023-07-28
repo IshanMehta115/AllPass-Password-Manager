@@ -33,7 +33,7 @@ AllPass Password Manager is a secure and user-friendly password management appli
 
 To run AllPass Password Manager locally on your machine, follow these steps:
 
-1. Clone the repository:<br>``
+1. Clone the repository:<br>
 3. Install the required dependencies:<br>`cd allpass-password-manager`<br>`pip install -r requirements.txt`
 4. Configure the database settings in the `settings.py` file.
 5. Apply the database migrations:<br>`python manage.py migrate`
